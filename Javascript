@@ -1,0 +1,315 @@
+<!--Calculatrice-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Calculatrice Modulo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    label { margin-right: 1em; }
+    input[type="number"] { width: 5em; }
+    .buttons { margin: 1em 0; }
+    #divAffiche { margin-top: 1.5em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <form onsubmit="event.preventDefault();">
+    <h1>Calculatrice</h1>
+    <label for="txtNombre1">Nombre 1:</label>
+    <input type="number" id="txtNombre1" required>
+    <label for="txtNombre2">Nombre 2:</label>
+    <input type="number" id="txtNombre2" required>
+    <div class="buttons">
+      <button type="button" onclick="calculer('+')">+</button>
+      <button type="button" onclick="calculer('-')">-</button>
+      <button type="button" onclick="calculer('*')">*</button>
+      <button type="button" onclick="calculer('/')">/</button>
+      <button type="button" onclick="calculer('^')">^</button>
+      <button type="button" onclick="calculer('%')">%</button>
+    </div>
+    <div id="divAffiche"></div>
+  </form>
+  <script>
+    function calculer(operation) {
+      const n1 = document.getElementById("txtNombre1").value;
+      const n2 = document.getElementById("txtNombre2").value;
+      const affiche = document.getElementById("divAffiche");
+
+      // Validation
+      if (n1 === "" || n2 === "") {
+        affiche.innerHTML = "Veuillez entrer les deux nombres.";
+        return;
+      }
+      const nombre1 = Number(n1);
+      const nombre2 = Number(n2);
+      if (isNaN(nombre1) || isNaN(nombre2)) {
+        affiche.innerHTML = "Veuillez entrer des valeurs numériques valides.";
+        return;
+      }
+
+      let resultat;
+      switch (operation) {
+        case '+':
+          resultat = nombre1 + nombre2;
+          break;
+        case '-':
+          resultat = nombre1 - nombre2;
+          break;
+        case '*':
+          resultat = nombre1 * nombre2;
+          break;
+        case '/':
+          if (nombre2 === 0) {
+            affiche.innerHTML = "Erreur : division par zéro.";
+            return;
+          }
+          resultat = nombre1 / nombre2;
+          break;
+        case '^':
+          resultat = nombre1 ** nombre2;
+          break;
+        case '%':
+          if (nombre2 === 0) {
+            affiche.innerHTML = "Erreur : modulo par zéro.";
+            return;
+          }
+          resultat = nombre1 % nombre2;
+          break;
+        default:
+          affiche.innerHTML = "Opération inconnue.";
+          return;
+      }
+      affiche.innerHTML = `${nombre1} ${operation} ${nombre2} = <strong>${resultat}</strong>`;
+    }
+  </script>
+</body>
+</html>
+
+<!Afficheur de nom-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Afficheur de Nom</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    label { display: block; margin-top: 1em; }
+    input[type="text"] { width: 15em; margin-right: 1em; }
+    .buttons { margin: 1.5em 0; }
+    button { margin-right: 1em; }
+    #resultat { margin-top: 2em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Afficheur de Nom</h1>
+    <label for="prenom">Prénom :</label>
+    <input type="text" id="prenom" required>
+
+    <label for="milieu">Nom du milieu :</label>
+    <input type="text" id="milieu">
+
+    <label for="nomfamille">Nom de famille :</label>
+    <input type="text" id="nomfamille" required>
+
+    <div class="buttons">
+      <button type="button" onclick="afficherInitiales()">Afficher les initiales</button>
+      <button type="button" onclick="afficherNomComplet()">Afficher le nom complet</button>
+      <button type="button" onclick="afficherNomUtilisateur()">Afficher le nom d'utilisateur</button>
+    </div>
+    <div id="resultat"></div>
+  </form>
+
+  <script>
+    function getInputs() {
+      return {
+        prenom: document.getElementById('prenom').value.trim(),
+        milieu: document.getElementById('milieu').value.trim(),
+        nomfamille: document.getElementById('nomfamille').value.trim()
+      };
+    }
+
+    function afficherInitiales() {
+      const {prenom, milieu, nomfamille} = getInputs();
+      if (!prenom || !nomfamille) {
+        document.getElementById('resultat').innerText = "Veuillez remplir au moins le prénom et le nom de famille.";
+        return;
+      }
+      let initiales = prenom.charAt(0).toUpperCase();
+      if (milieu) initiales += milieu.charAt(0).toUpperCase();
+      initiales += nomfamille.charAt(0).toUpperCase();
+      document.getElementById('resultat').innerText = `Initiales : ${initiales}`;
+    }
+
+    function afficherNomComplet() {
+      const {prenom, milieu, nomfamille} = getInputs();
+      if (!prenom || !nomfamille) {
+        document.getElementById('resultat').innerText = "Veuillez remplir au moins le prénom et le nom de famille.";
+        return;
+      }
+      let nomComplet = prenom;
+      if (milieu) nomComplet += ' ' + milieu;
+      nomComplet += ' ' + nomfamille;
+      document.getElementById('resultat').innerText = `Nom complet : ${nomComplet}`;
+    }
+
+    // Fonction pour retirer les accents et caractères spéciaux
+    function nettoyer(str) {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "");
+    }
+
+    function afficherNomUtilisateur() {
+      const {prenom, nomfamille} = getInputs();
+      if (!prenom || !nomfamille) {
+        document.getElementById('resultat').innerText = "Veuillez remplir au moins le prénom et le nom de famille.";
+        return;
+      }
+      const user = nettoyer(prenom).toLowerCase() + '.' + nettoyer(nomfamille).toLowerCase();
+      document.getElementById('resultat').innerText = `Nom d'utilisateur : ${user}`;
+    }
+  </script>
+</body>
+</html>
+
+<!--Formulaire d'Inscription-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Formulaire d'inscription</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    form { max-width: 400px; }
+    fieldset { border: none; margin-bottom: 1em; }
+    legend { font-weight: bold; }
+    label { margin-right: 1em; }
+    .result { margin-top: 2em; font-weight: bold; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <form id="inscriptionForm" onsubmit="event.preventDefault(); soumettreFormulaire();">
+    <h1>Formulaire d'inscription</h1>
+
+    <label for="txtNom">Nom :</label>
+    <input type="text" id="txtNom" required>
+    <br><br>
+
+    <fieldset>
+      <legend>Année d'étude :</legend>
+      <input type="radio" id="annee9" name="annee" value="9e">
+      <label for="annee9">9e</label>
+      <input type="radio" id="annee10" name="annee" value="10e">
+      <label for="annee10">10e</label>
+      <input type="radio" id="annee11" name="annee" value="11e" checked>
+      <label for="annee11">11e</label>
+      <input type="radio" id="annee12" name="annee" value="12e">
+      <label for="annee12">12e</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Langages de codage connus :</legend>
+      <input type="checkbox" id="langJS" name="langues" value="JavaScript">
+      <label for="langJS">JavaScript</label>
+      <input type="checkbox" id="langHTML" name="langues" value="HTML">
+      <label for="langHTML">HTML</label>
+      <input type="checkbox" id="langCSS" name="langues" value="CSS">
+      <label for="langCSS">CSS</label>
+    </fieldset>
+
+    <button type="submit">Soumettre le formulaire</button>
+
+    <div id="divAffiche" class="result"></div>
+  </form>
+
+  <script>
+    function soumettreFormulaire() {
+      const nom = document.getElementById("txtNom").value.trim();
+      const radiosAnnee = document.getElementsByName("annee");
+      const checkLangues = document.getElementsByName("langues");
+      const affiche = document.getElementById("divAffiche");
+
+      // Validation du nom
+      if (!nom) {
+        affiche.innerHTML = '<span class="error">Veuillez entrer votre nom.</span>';
+        return;
+      }
+
+      // Trouver l'année sélectionnée
+      let annee = '';
+      for (const radio of radiosAnnee) {
+        if (radio.checked) {
+          annee = radio.value;
+          break;
+        }
+      }
+
+      // Trouver les langages sélectionnés
+      const langues = [];
+      for (const chk of checkLangues) {
+        if (chk.checked) {
+          langues.push(chk.value);
+        }
+      }
+
+      // Validation des langages
+      if (langues.length === 0) {
+        affiche.innerHTML = '<span class="error">Veuillez sélectionner au moins un langage de codage.</span>';
+        return;
+      }
+
+      // Construction du message
+      const message = `
+        <br>Votre nom est : <strong>${nom}</strong>.<br>
+        Vous êtes en <strong>${annee}</strong>.<br>
+        Langages connus : <strong>${langues.join(', ')}</strong>.
+      `;
+
+      affiche.innerHTML = message;
+    }
+  </script>
+</body>
+</html>
+
+<!--Formulaire MadLibs-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>MadLibs</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    #madlib-result { margin-top: 2em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Crée ton MadLibs !</h1>
+  <form id="madlib-form">
+    <input id="adjectif" placeholder="Adjectif" required>
+    <input id="animal" placeholder="Animal" required>
+    <input id="verbe" placeholder="Verbe (infinitif)" required>
+    <input id="lieu" placeholder="Lieu" required>
+    <select id="nourriture" required>
+      <option value="">Nourriture préférée</option>
+      <option>Pizza</option>
+      <option>Sushi</option>
+      <option>Pâtes</option>
+      <option>Glace</option>
+    </select>
+    <button>Créer le MadLibs</button>
+  </form>
+  <div id="madlib-result"></div>
+  <script>
+    document.getElementById('madlib-form').onsubmit = function(e) {
+      e.preventDefault();
+      const adj = adiectif.value.trim(), animal = animal.value.trim(), verbe = verbe.value.trim(), lieu = lieu.value.trim(), nourriture = nourriture.value;
+      if (!adj || !animal || !verbe || !lieu || !nourriture) {
+        madlib-result.textContent = "Merci de remplir tous les champs.";
+        return;
+      }
+      madlib-result.textContent = `Par une journée très ${adj}, un ${animal} a décidé de ${verbe} jusqu’au ${lieu}. Sur place, il a mangé beaucoup de ${nourriture}. Quelle aventure délicieuse !`;
+    }
+  </script>
+</body>
+</html>
+
